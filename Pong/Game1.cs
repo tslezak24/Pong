@@ -7,6 +7,8 @@ namespace Pong
     public class Game1 : Game
     {
         Texture2D ballTexture;
+        Vector2 ballPosition;
+        float ballSpeed;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -21,6 +23,9 @@ namespace Pong
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            ballPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2,
+                _graphics.PreferredBackBufferHeight / 2);
+            ballSpeed = 100f;
 
             base.Initialize();
         }
@@ -39,6 +44,45 @@ namespace Pong
                 Exit();
 
             // TODO: Add your update logic here
+            var kstate = Keyboard.GetState();
+
+            if (kstate.IsKeyDown(Keys.Up))
+            {
+                ballPosition.Y -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            if (kstate.IsKeyDown(Keys.Down))
+            {
+                ballPosition.Y += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            if (kstate.IsKeyDown(Keys.Left))
+            {
+                ballPosition.X -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            if (kstate.IsKeyDown(Keys.Right))
+            {
+                ballPosition.X += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            if (ballPosition.X > _graphics.PreferredBackBufferWidth - ballTexture.Width / 2)
+            {
+                ballPosition.X = _graphics.PreferredBackBufferWidth - ballTexture.Width / 2;
+            }
+            else if (ballPosition.X < ballTexture.Width / 2)
+            {
+                ballPosition.X = ballTexture.Width / 2;
+            }
+
+            if (ballPosition.Y > _graphics.PreferredBackBufferHeight - ballTexture.Height / 2)
+            {
+                ballPosition.Y = _graphics.PreferredBackBufferHeight - ballTexture.Height / 2;
+            }
+            else if (ballPosition.Y < ballTexture.Height / 2)
+            {
+                ballPosition.Y = ballTexture.Height / 2;
+            }
 
             base.Update(gameTime);
         }
@@ -49,7 +93,16 @@ namespace Pong
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            _spriteBatch.Draw(ballTexture, new Vector2(0, 0), Color.White);
+            _spriteBatch.Draw(ballTexture, 
+                ballPosition, 
+                null,
+                Color.White,
+                0f,
+                new Vector2(ballTexture.Width / 2, ballTexture.Height / 2),
+                Vector2.One,
+                SpriteEffects.None,
+                0f
+            );
             _spriteBatch.End();
 
             base.Draw(gameTime);
